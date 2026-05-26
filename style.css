@@ -1,0 +1,160 @@
+@charset "UTF-8";
+
+/* =========================================================
+   0. CSS 변수 (W11) — 색·간격을 한 곳에서 관리
+   ========================================================= */
+:root {
+  --main: #3b82f6;
+  --accent: #f59e0b;
+  --bg: #f1f5f9;
+  --text: #1e293b;
+  --card: #ffffff;
+  --gap: 16px;
+}
+
+/* 다크 모드 (W11) — 시스템 설정에 따라 자동 전환 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f172a;
+    --text: #e2e8f0;
+    --card: #1e293b;
+  }
+}
+
+/* =========================================================
+   1. 공통 기본
+   ========================================================= */
+* { box-sizing: border-box; }
+
+body {
+  font-family: sans-serif;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  /* clamp (W11) — 화면 크기에 따라 글자 크기가 유동적으로 */
+  font-size: clamp(15px, 1.5vw, 18px);
+}
+
+/* =========================================================
+   2. 헤더 + 네비게이션 (W7 Flexbox)
+   ========================================================= */
+header {
+  background: var(--main);
+  color: white;
+  /* calc (W11) — 좌우 여백 계산 */
+  padding: calc(var(--gap) * 2);
+  text-align: center;
+  /* sticky (W10) — 스크롤해도 상단에 고정 */
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+header h1 {
+  /* clamp (W11) — 제목 크기 유동 */
+  font-size: clamp(24px, 5vw, 40px);
+  margin: 0 0 8px;
+}
+nav {
+  display: flex;            /* W7 Flexbox */
+  justify-content: center;
+  gap: var(--gap);
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+nav a {
+  color: white;
+  text-decoration: none;    /* W10 text-decoration */
+  text-transform: uppercase;/* W10 text-transform */
+  font-weight: bold;
+  margin: 0 8px;
+  transition: opacity 0.2s; /* W12 transition */
+}
+nav a:hover { opacity: 0.7; }
+
+main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--gap);
+}
+
+h2 {
+  color: var(--main);
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 4px;
+}
+
+/* =========================================================
+   3. 작품 갤러리 — CSS Grid (W9 · W10)
+   ========================================================= */
+.works {
+  display: grid;
+  /* auto-fit + minmax (W10) — 화면 폭에 맞춰 열 개수 자동 조정 */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--gap);
+  margin-top: var(--gap);
+}
+.work-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  /* transition (W12) — hover 시 부드럽게 떠오름 */
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.work-card:hover {
+  transform: translateY(-6px);            /* W6 transform */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+.work-card h3 { color: var(--accent); margin-top: 0; }
+
+/* =========================================================
+   4. 소개 페이지 레이아웃 — Grid areas (W10)
+   ========================================================= */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-template-areas: "photo intro";
+  gap: calc(var(--gap) * 2);
+  align-items: center;
+}
+.about-photo { grid-area: photo; text-align: center; }
+.about-intro { grid-area: intro; }
+
+/* SVG 아이콘 (W12) */
+.logo-svg { width: 120px; height: 120px; }
+.logo-svg circle, .logo-svg path {
+  fill: none;
+  stroke: var(--main);
+  stroke-width: 6;
+  /* stroke 애니메이션 (W12) */
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: draw 2.5s ease forwards;
+}
+
+/* =========================================================
+   5. 애니메이션 (W12) — @keyframes
+   ========================================================= */
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+main section { animation: fadeUp 0.6s ease both; }
+
+/* =========================================================
+   6. 반응형 — 미디어 쿼리 (W11)
+   ========================================================= */
+@media (max-width: 600px) {
+  /* 모바일에서는 소개를 한 열로 */
+  .about-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "photo"
+      "intro";
+    text-align: center;
+  }
+  nav { flex-direction: column; gap: 8px; }
+}
